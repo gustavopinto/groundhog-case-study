@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import br.ufpe.cin.groundhog.Language;
 import br.ufpe.cin.groundhog.Project;
+import br.ufpe.cin.groundhog.answers.issue1.Projects;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchModule;
