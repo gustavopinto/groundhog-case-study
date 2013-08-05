@@ -54,7 +54,6 @@ public class Issues {
 	 * search above that are forks.
 	 */
 	public static void issue22() throws IOException {
-
 		int n = 1, m = 15;
 		List<Project> projects = searchGitHub.getProjects("opencv", 1, 15);
 
@@ -105,40 +104,6 @@ public class Issues {
 	}
 
 	/**
-	 * Testing issue 47 - https://github.com/spgroup/groundhog/issues/47
-	 * 
-	 * How many projects are created each year?
-	 * 
-	 * Algorithm:
-	 * 
-	 * Search for a number of java projects, and organize the information in the
-	 * createdat column.
-	 */
-	public static void issue47() {
-		
-		System.out.println("downloading projects..");
-		List<Project> projects = searchGitHub.getAllProjects(0, 2);
-		Map<Integer, Integer> years = new HashMap<Integer, Integer>();
-
-		Calendar c = Calendar.getInstance();
-
-		for (Project project : projects) {
-			c.setTime(project.getCreatedAt());
-			int year = c.get(Calendar.YEAR);
-
-			Integer value = years.get(year);
-			if (value == null) {
-				years.put(year, 1);
-			} else {
-				years.put(year, value++);
-			}
-		}
-
-		System.out.println("The result is:");
-		System.out.println(years);
-	}
-
-	/**
 	 * Testing issue 56: https://github.com/spgroup/groundhog/issues/56
 	 * 
 	 * To provide an answer to the question "What are the five most used licenses?"
@@ -168,5 +133,48 @@ public class Issues {
 		}
 		
 		System.out.println(licenses);
+	}
+
+	/**
+	 * Testing issue 47 - https://github.com/spgroup/groundhog/issues/47
+	 * 
+	 * How many projects are created each year?
+	 * 
+	 * Algorithm:
+	 * 
+	 * Search for a number of java projects, and organize the information in the
+	 * createdat column.
+	 */
+	public static void issue47(){
+		Map<Integer, Integer> years = new HashMap<>();
+		Map<String, Integer> langs = new HashMap<>();
+		
+		System.out.println("Download projects..");
+		List<Project> projects = searchGitHub.getAllProjects(1, 900);
+		for (Project project : projects) {
+			Date created_at = project.getCreatedAt();
+			Calendar c = Calendar.getInstance();
+			c.setTime(created_at);
+			Integer year = c.get(Calendar.YEAR);
+			
+			Integer value = years.get(year);
+			if(value == null) {
+				years.put(year, 1);
+			} else {
+				years.put(year, ++value);
+			}
+			
+			String lang = project.getLanguage();
+			value = langs.get(lang);
+			if(value == null) {
+				langs.put(lang, 1);
+			} else {
+				langs.put(lang, ++value);
+			}
+		}
+		
+		System.out.println("The total of projects created each year is:");
+		System.out.println("years: " + years);
+		System.out.println("languages: " + langs);
 	}
 }
