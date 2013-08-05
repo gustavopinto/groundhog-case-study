@@ -1,4 +1,4 @@
-package br.ufpe.cin.groundhog.answers.issue1;
+package br.ufpe.cin.groundhog.answers.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import br.ufpe.cin.groundhog.Project;
  * 
  * @author gustavopinto
  */
-public class Projects {
+public class AnswersUtil {
 
 	/**
 	 * Method to inform the median number of forks per project in a collection of projects
