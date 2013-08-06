@@ -9,8 +9,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import br.ufpe.cin.groundhog.License;
 import br.ufpe.cin.groundhog.Project;
@@ -32,16 +30,17 @@ import com.google.inject.Injector;
 public class Issues {
 
 	static File downloadFolder = FileUtil.getInstance().createTempDir();
-	
+
 	static Injector injector = Guice.createInjector(new SearchModule(),
 			new HttpModule());
 	static SearchGitHub searchGitHub = injector.getInstance(SearchGitHub.class);
 
 	static ForgeCrawler crawler = new CrawlGitHub(
 			injector.getInstance(GitClient.class), downloadFolder);
-	
-	static GitCodeHistory codeHistory = injector.getInstance(GitCodeHistory.class);
-	
+
+	static GitCodeHistory codeHistory = injector
+			.getInstance(GitCodeHistory.class);
+
 	/**
 	 * Testing issue 22 - https://github.com/spgroup/groundhog/issues/22
 	 * 
@@ -106,32 +105,35 @@ public class Issues {
 	/**
 	 * Testing issue 56: https://github.com/spgroup/groundhog/issues/56
 	 * 
-	 * To provide an answer to the question "What are the five most used licenses?"
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * To provide an answer to the question
+	 * "What are the five most used licenses?"
 	 * 
 	 */
-	public static void issue56() throws InterruptedException, ExecutionException {
-		
-		System.out.println("searching...");
-		List<Project> projects = searchGitHub.getAllProjects(0, 5);
-		
-		System.out.print("download... ");
-		System.out.println("they will be at " + downloadFolder.getAbsolutePath());
-		
-		List<Future<File>> futures = crawler.downloadProjects(projects);
+	public static void issue56() throws Exception {
+
+		System.out.println("Searching...");
+		List<Project> projects = searchGitHub.getAllForgeProjects(0, 10);
+
+		System.out.print("Downloading projects... ");
+		System.out.println("they will be available at "
+				+ downloadFolder.getAbsolutePath());
 		List<License> licenses = new ArrayList<>();
-		for (Future<File> f : futures) { // wait for download
-			File repositoryFolder = f.get();
-			
-			System.out.println("checkouting project " + repositoryFolder.getName());
-			Date date = new GregorianCalendar(2013, 6, 1).getTime();
-			File temp = codeHistory.checkoutToDate(repositoryFolder.getName(), repositoryFolder, date);
-			
-			License l = new LicenseParser(temp).parser();
-			licenses.add(l);
+
+		try {
+			for (Project project : projects) {
+				File projectLocal = crawler.downloadProject(project);
+
+				Date date = new GregorianCalendar(2013, 6, 1).getTime();
+				File temp = codeHistory.checkoutToDate(projectLocal.getName(),
+						projectLocal, date);
+
+				License l = new LicenseParser(temp).parser();
+				licenses.add(l);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
+
 		System.out.println(licenses);
 	}
 
@@ -145,10 +147,10 @@ public class Issues {
 	 * Search for a number of java projects, and organize the information in the
 	 * createdat column.
 	 */
-	public static void issue47(){
+	public static void issue47() {
 		Map<Integer, Integer> years = new HashMap<>();
 		Map<String, Integer> langs = new HashMap<>();
-		
+
 		System.out.println("Download projects..");
 		List<Project> projects = searchGitHub.getAllProjects(1, 900);
 		for (Project project : projects) {
@@ -156,23 +158,23 @@ public class Issues {
 			Calendar c = Calendar.getInstance();
 			c.setTime(created_at);
 			Integer year = c.get(Calendar.YEAR);
-			
+
 			Integer value = years.get(year);
-			if(value == null) {
+			if (value == null) {
 				years.put(year, 1);
 			} else {
 				years.put(year, ++value);
 			}
-			
+
 			String lang = project.getLanguage();
 			value = langs.get(lang);
-			if(value == null) {
+			if (value == null) {
 				langs.put(lang, 1);
 			} else {
 				langs.put(lang, ++value);
 			}
 		}
-		
+
 		System.out.println("The total of projects created each year is:");
 		System.out.println("years: " + years);
 		System.out.println("languages: " + langs);
