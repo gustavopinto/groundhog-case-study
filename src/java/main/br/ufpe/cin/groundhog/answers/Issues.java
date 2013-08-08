@@ -112,7 +112,7 @@ public class Issues {
 	public static void issue56() throws Exception {
 
 		System.out.println("Searching...");
-		List<Project> projects = searchGitHub.getAllForgeProjects(0, 10);
+		List<Project> projects = searchGitHub.getAllForgeProjects(0, 30);
 
 		System.out.print("Downloading projects... ");
 		System.out.println("they will be available at "

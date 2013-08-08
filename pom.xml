@@ -25,7 +25,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>br.ufpe.cin.groundhog</groupId>
+			<groupId>br.ufpe.cin</groupId>
 			<artifactId>groundhog</artifactId>
 			<version>0.1.0</version>
 		</dependency>
