@@ -32,7 +32,7 @@ public class ToGetProjectsWithMoreThanOneLanguage {
 		
 		List<Project> projects = new ArrayList<Project>();
 		for (Project project : rawData) {
-			List<Language> languages = searchGitHub.fetchProjectLanguages(project);
+			List<Language> languages = searchGitHub.getProjectLanguages(project);
 			
 			if(languages.size() > 1){
 				projects.add(project);

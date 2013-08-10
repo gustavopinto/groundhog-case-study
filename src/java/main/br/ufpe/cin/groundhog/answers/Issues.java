@@ -2,7 +2,6 @@ package br.ufpe.cin.groundhog.answers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -112,12 +111,12 @@ public class Issues {
 	public static void issue56() throws Exception {
 
 		System.out.println("Searching...");
-		List<Project> projects = searchGitHub.getAllForgeProjects(0, 10);
+		List<Project> projects = searchGitHub.getAllForgeProjects(0, 100);
 
 		System.out.print("Downloading projects... ");
 		System.out.println("they will be available at "
 				+ downloadFolder.getAbsolutePath());
-		List<License> licenses = new ArrayList<>();
+		HashMap<String, Integer> licenses = new HashMap<>();
 
 		try {
 			for (Project project : projects) {
@@ -128,7 +127,13 @@ public class Issues {
 						projectLocal, date);
 
 				License l = new LicenseParser(temp).parser();
-				licenses.add(l);
+				
+				Integer value = licenses.get(l.getName());
+				if (value == null) {
+					licenses.put(l.getName(), 1);
+				} else {
+					licenses.put(l.getName(), ++value);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
