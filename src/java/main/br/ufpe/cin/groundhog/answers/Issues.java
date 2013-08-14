@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.License;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.User;
@@ -112,7 +113,7 @@ public class Issues {
 	public static void issue56() throws Exception {
 
 		System.out.println("Searching...");
-		List<Project> projects = searchGitHub.getAllForgeProjects(0, 30);
+		List<Project> projects = searchGitHub.getAllForgeProjects(2, 10);
 
 		System.out.print("Downloading projects... ");
 		System.out.println("they will be available at "
@@ -178,5 +179,27 @@ public class Issues {
 		System.out.println("The total of projects created each year is:");
 		System.out.println("years: " + years);
 		System.out.println("languages: " + langs);
+	}
+	
+	/**
+	 * Testing issue 53 - https://github.com/spgroup/groundhog/issues/53
+	 * 
+	 * How did the no. of commits for Java projects change over years?
+	 * 
+	 * Algorithm:
+	 * 
+	 */
+	public static void issue53() {
+		List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
+		
+		System.out.println(projects.size() + " projects will be analized..");
+		for (Project project : projects) {
+			List<Commit> commits = searchGitHub.getAllProjectCommits(project);
+
+			System.out.println("Listing commits from project " + project.getName());
+			for (Commit commit : commits) {
+				System.out.println(commit.getSha() + "-" + commit.getPushDate());
+			}
+		}
 	}
 }
