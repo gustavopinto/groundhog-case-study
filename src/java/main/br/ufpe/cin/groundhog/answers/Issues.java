@@ -2,13 +2,12 @@ package br.ufpe.cin.groundhog.answers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.License;
@@ -113,23 +112,27 @@ public class Issues {
 	public static void issue56() throws Exception {
 
 		System.out.println("Searching...");
-		List<Project> projects = searchGitHub.getAllForgeProjects(2, 10);
+		List<Project> projects = searchGitHub.getAllForgeProjects(10, 30);
 
 		System.out.print("Downloading projects... ");
 		System.out.println("they will be available at "
 				+ downloadFolder.getAbsolutePath());
-		List<License> licenses = new ArrayList<>();
+		HashMap<String, Integer> licenses = new HashMap<>();
 
 		try {
 			for (Project project : projects) {
 				File projectLocal = crawler.downloadProject(project);
 
-				Date date = new GregorianCalendar(2013, 6, 1).getTime();
-				File temp = codeHistory.checkoutToDate(projectLocal.getName(),
-						projectLocal, date);
-
-				License l = new LicenseParser(temp).parser();
-				licenses.add(l);
+				Set<License> ls = new LicenseParser(projectLocal).parser();
+				
+				License l = ls.iterator().next();
+				
+				Integer value = licenses.get(l.getName());
+				if (value == null) {
+					licenses.put(l.getName(), 1);
+				} else {
+					licenses.put(l.getName(), ++value);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -198,7 +201,7 @@ public class Issues {
 
 			System.out.println("Listing commits from project " + project.getName());
 			for (Commit commit : commits) {
-				System.out.println(commit.getSha() + "-" + commit.getPushDate());
+				System.out.println(commit.getSha() + "-" + commit.getCommitDate());
 			}
 		}
 	}
