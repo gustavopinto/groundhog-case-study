@@ -2,6 +2,7 @@ package br.ufpe.cin.groundhog.answers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.ufpe.cin.groundhog.Commit;
+import br.ufpe.cin.groundhog.GroundhogException;
 import br.ufpe.cin.groundhog.License;
 import br.ufpe.cin.groundhog.Project;
 import br.ufpe.cin.groundhog.User;
@@ -20,6 +22,7 @@ import br.ufpe.cin.groundhog.crawler.ForgeCrawler;
 import br.ufpe.cin.groundhog.http.HttpModule;
 import br.ufpe.cin.groundhog.parser.license.LicenseParser;
 import br.ufpe.cin.groundhog.scmclient.GitClient;
+import br.ufpe.cin.groundhog.search.SearchException;
 import br.ufpe.cin.groundhog.search.SearchGitHub;
 import br.ufpe.cin.groundhog.search.SearchModule;
 import br.ufpe.cin.groundhog.util.FileUtil;
@@ -203,6 +206,42 @@ public class Issues {
 			for (Commit commit : commits) {
 				System.out.println(commit.getSha() + "-" + commit.getCommitDate());
 			}
+		}
+	}
+	
+	/**
+	 * Fetches all the Commits of the given {@link Project} from the GitHub API
+	 * @param project the @{link Project} to which the commits belong
+	 * @return a {@link List} of {@link Commit} objects
+	 */
+	public static void issueXX() {
+		try {
+			int numberOfProjects = 100;
+			
+			List<Project> rawData = searchGitHub.getAllProjects(0, numberOfProjects);
+
+			List<Project> projects = new ArrayList<>();
+
+			for (Project project : rawData) {
+
+				List<Commit> commits = searchGitHub.getAllProjectCommitsByDate(project, "2012-01-01", "2012-12-31");
+
+				System.out.println("Project Name: "+project.getName());
+				System.out.println("Number of commits: "+commits.size());
+
+				if(commits.size() > 0){
+					projects.add(project);
+				}
+				
+				System.out.println("Number of projects with more than one commit: "+projects.size());
+				
+				double percent = ((projects.size()*1.0)/numberOfProjects)*100.0;
+				System.out.println( percent + "% of the projects java of " + numberOfProjects + " projects");
+			}
+
+		} catch (GroundhogException e) {
+			e.printStackTrace();
+			throw new SearchException(e);
 		}
 	}
 }
