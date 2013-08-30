@@ -210,11 +210,12 @@ public class Issues {
 	}
 	
 	/**
-	 * Fetches all the Commits of the given {@link Project} from the GitHub API
-	 * @param project the @{link Project} to which the commits belong
-	 * @return a {@link List} of {@link Commit} objects
+	 * Testing issue 48 - https://github.com/spgroup/groundhog/issues/48 
+	 * 
+	 * To provide an answer to the question "How many Java projects were active in 2012?
+	 * 
 	 */
-	public static void issueXX() {
+	public static void issue48() {
 		try {
 			int numberOfProjects = 100;
 			
