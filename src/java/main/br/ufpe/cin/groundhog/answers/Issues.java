@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.junit.Assert;
 
 import br.ufpe.cin.groundhog.Commit;
 import br.ufpe.cin.groundhog.GroundhogException;
@@ -240,6 +243,48 @@ public class Issues {
 				System.out.println( percent + "% of the projects java of " + numberOfProjects + " projects");
 			}
 
+		} catch (GroundhogException e) {
+			e.printStackTrace();
+			throw new SearchException(e);
+		}
+	}
+	
+	/**
+	 * Testing issue 49 - https://github.com/spgroup/groundhog/issues/49
+	 * 
+	 * To provide an answer to the question "How many revisions are there in all Java projects?"
+	 * 
+	 */
+	public static void issue49() {
+		try {
+			
+			int response = 0;
+			int numberTotalTags = 0;
+			
+			List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
+			
+			for (Iterator<Project> iterator = projects.iterator(); iterator.hasNext();) {
+				
+				Project project = (Project) iterator.next();
+				
+				response = searchGitHub.getNumberProjectTags(project);
+				
+				System.out.println("Project Name: "+project.getName());
+				System.out.println("Number of tags: "+response);
+				
+				if(response > 0){
+					
+					numberTotalTags += response;
+				}
+				
+				response = 0;
+			}
+			
+			float average = (numberTotalTags*(1.0))/(projects.size()*(1.0));
+			
+			System.out.println("In " + projects.size() + " java projects there are " + numberTotalTags + " tags");
+			System.out.println("An average of " + average + " tags per project");
+			
 		} catch (GroundhogException e) {
 			e.printStackTrace();
 			throw new SearchException(e);
