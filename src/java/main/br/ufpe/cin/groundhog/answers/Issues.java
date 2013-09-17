@@ -261,7 +261,7 @@ public class Issues {
 			int response = 0;
 			int numberTotalTags = 0;
 			
-			List<Project> projects = searchGitHub.getAllProjectsByLanguage("java");
+			List<Project> projects = searchGitHub.getAllProjects(0, 5000);
 			
 			for (Iterator<Project> iterator = projects.iterator(); iterator.hasNext();) {
 				
@@ -280,7 +280,7 @@ public class Issues {
 				response = 0;
 			}
 			
-			float average = (numberTotalTags*(1.0))/(projects.size()*(1.0));
+			float average = (float) ((numberTotalTags*(1.0))/(projects.size()*(1.0)));
 			
 			System.out.println("In " + projects.size() + " java projects there are " + numberTotalTags + " tags");
 			System.out.println("An average of " + average + " tags per project");
